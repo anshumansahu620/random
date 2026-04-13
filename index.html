@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy 18th Birthday, Awa! 🎉</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --gold:        #c9943a;
+    --gold-light:  #e8c47a;
+    --gold-pale:   #f5e8c8;
+    --ocean:       #5a7fa8;
+    --text-dark:   #2c2416;
+    --text-mid:    #5a4e3a;
+    --text-soft:   #8a7a62;
+    --cream:       #fdf8f0;
+    --card-bg:     rgba(255,255,255,0.85);
+    --card-border: rgba(201,148,58,0.2);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    background-image:
+      radial-gradient(ellipse at 10% 0%,   #fff8ee 0%, transparent 55%),
+      radial-gradient(ellipse at 90% 100%, #fdefd8 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 50%,  #fffcf7 0%, transparent 80%);
+    min-height: 100vh;
+    font-family: 'Lato', sans-serif;
+    color: var(--text-dark);
+    overflow-x: hidden;
+  }
+
+  #fireworksCanvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .content { position: relative; z-index: 1; }
+
+  /* ── HERO ─────────────────────────────────── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(232,196,122,0.18) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(201,148,58,0.10) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .hero-bg-number {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(10rem, 30vw, 22rem);
+    font-weight: 700;
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(201,148,58,0.11);
+    position: absolute;
+    user-select: none;
+    animation: breathe 4s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes breathe {
+    0%, 100% { opacity: 0.7; transform: scale(1); }
+    50%       { opacity: 1;   transform: scale(1.03); }
+  }
+
+  .hero-badge {
+    font-size: 0.78rem;
+    letter-spacing: 0.38em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    animation: fadeSlideDown 1s ease both;
+    position: relative;
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3.5rem, 12vw, 8rem);
+    font-weight: 700;
+    color: var(--text-dark);
+    line-height: 1.05;
+    animation: fadeSlideDown 1s 0.25s ease both;
+    position: relative;
+  }
+
+  .hero-title .name {
+    color: var(--gold);
+    font-style: italic;
+    display: block;
+  }
+
+  .hero-subtitle {
+    font-size: 1.1rem;
+    color: var(--ocean);
+    margin-top: 1.2rem;
+    letter-spacing: 0.06em;
+    animation: fadeSlideDown 1s 0.5s ease both;
+    position: relative;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-soft);
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    animation: fadeSlideDown 1s 1.2s ease both, scrollBounce 2s 2.5s ease-in-out infinite;
+  }
+
+  .scroll-chevron {
+    width: 20px; height: 20px;
+    border-right: 1.5px solid var(--gold);
+    border-bottom: 1.5px solid var(--gold);
+    transform: rotate(45deg);
+  }
+
+  @keyframes scrollBounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50%       { transform: translateX(-50%) translateY(9px); }
+  }
+
+  /* ── SECTIONS ─────────────────────────────── */
+  section {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5rem 2rem;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+  }
+
+  section.visible { opacity: 1; transform: translateY(0); }
+
+  .section-tag {
+    font-size: 0.7rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.8rem;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 6vw, 3.8rem);
+    color: var(--text-dark);
+    margin-bottom: 2.5rem;
+    line-height: 1.2;
+  }
+
+  .accent { color: var(--gold); font-style: italic; }
+
+  .wave-divider {
+    width: 100%;
+    text-align: center;
+    padding: 2rem 0;
+    font-size: 1.2rem;
+    letter-spacing: 0.6rem;
+    color: var(--gold-light);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── QUOTE CARDS ──────────────────────────── */
+  .quotes-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
+    max-width: 700px;
+    width: 100%;
+  }
+
+  .quote-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 2.5rem 3rem;
+    position: relative;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 30px rgba(201,148,58,0.08), 0 1px 4px rgba(0,0,0,0.04);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: left;
+  }
+
+  .quote-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 50px rgba(201,148,58,0.14), 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  .quote-mark {
+    font-family: 'Playfair Display', serif;
+    font-size: 8rem;
+    color: var(--gold-light);
+    opacity: 0.35;
+    position: absolute;
+    top: -2rem; left: 1.5rem;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .quote-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-style: italic;
+    color: var(--text-dark);
+    line-height: 1.75;
+    margin-bottom: 0.6rem;
+  }
+
+  .quote-translation {
+    font-size: 0.9rem;
+    color: var(--ocean);
+    margin-bottom: 1rem;
+  }
+
+  .quote-source {
+    font-size: 0.73rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  /* ── 18 THINGS ────────────────────────────── */
+  .things-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 1rem;
+    max-width: 920px;
+    width: 100%;
+    text-align: left;
+  }
+
+  .thing-item {
+    background: white;
+    border: 1px solid rgba(201,148,58,0.15);
+    border-radius: 14px;
+    padding: 1.2rem 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    transition: background 0.3s, border-color 0.3s, transform 0.25s, box-shadow 0.25s;
+  }
+
+  .thing-item:hover {
+    background: var(--gold-pale);
+    border-color: rgba(201,148,58,0.4);
+    transform: translateX(5px);
+    box-shadow: 0 4px 20px rgba(201,148,58,0.12);
+  }
+
+  .thing-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: var(--gold-light);
+    line-height: 1;
+    min-width: 40px;
+  }
+
+  .thing-text {
+    font-size: 0.93rem;
+    color: var(--text-mid);
+    line-height: 1.55;
+    padding-top: 0.35rem;
+  }
+
+  /* ── LETTER ───────────────────────────────── */
+  .letter-card {
+    max-width: 660px;
+    width: 100%;
+    background: white;
+    border: 1px solid rgba(201,148,58,0.18);
+    border-radius: 20px;
+    padding: 3rem 3.5rem;
+    text-align: left;
+    font-size: 1.05rem;
+    line-height: 1.95;
+    color: var(--text-mid);
+    box-shadow: 0 4px 30px rgba(0,0,0,0.06);
+    position: relative;
+  }
+
+  .letter-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 3rem; right: 3rem;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--gold-light), transparent);
+    border-radius: 2px;
+  }
+
+  .letter-card p { margin-bottom: 1.2rem; }
+  .letter-card p:last-child { margin-bottom: 0; }
+  .letter-em   { color: var(--text-dark); font-style: italic; }
+  .letter-sign { color: var(--gold); font-style: italic; }
+
+  /* ── WISHES ───────────────────────────────── */
+  .wishes-area { max-width: 660px; width: 100%; }
+
+  .wish-input {
+    width: 100%;
+    background: white;
+    border: 1px solid rgba(201,148,58,0.3);
+    border-radius: 14px;
+    padding: 1.1rem 1.5rem;
+    font-size: 1rem;
+    color: var(--text-dark);
+    font-family: 'Lato', sans-serif;
+    margin-bottom: 1rem;
+    resize: none;
+    outline: none;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .wish-input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201,148,58,0.12);
+  }
+
+  .wish-input::placeholder { color: rgba(90,78,58,0.35); }
+
+  .wish-btn {
+    background: linear-gradient(135deg, var(--gold), #a87828);
+    border: none;
+    border-radius: 10px;
+    padding: 0.85rem 2.2rem;
+    font-size: 0.95rem;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    font-family: 'Lato', sans-serif;
+    box-shadow: 0 4px 16px rgba(201,148,58,0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .wish-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,148,58,0.4); }
+  .wish-btn:active { transform: scale(0.97); }
+
+  .wishes-list {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    width: 100%;
+  }
+
+  .wish-bubble {
+    background: white;
+    border-left: 3px solid var(--gold-light);
+    border-radius: 0 14px 14px 0;
+    padding: 0.9rem 1.3rem;
+    font-size: 0.95rem;
+    color: var(--text-mid);
+    text-align: left;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    animation: wishIn 0.5s ease;
+  }
+
+  @keyframes wishIn {
+    from { opacity: 0; transform: translateX(-16px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .footer {
+    text-align: center;
+    padding: 3rem 2rem 4rem;
+    color: var(--text-soft);
+    font-size: 0.82rem;
+    letter-spacing: 0.12em;
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid rgba(201,148,58,0.12);
+  }
+
+  .particle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+    animation: floatUp linear infinite;
+    opacity: 0;
+  }
+
+  @keyframes floatUp {
+    0%   { transform: translateY(105vh) rotate(0deg);   opacity: 0.5; }
+    100% { transform: translateY(-8vh)  rotate(360deg); opacity: 0; }
+  }
+
+  @keyframes fadeSlideDown {
+    from { opacity: 0; transform: translateY(-24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── MUTE BUTTON ──────────────────────────── */
+  .mute-btn {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 100;
+    background: white;
+    border: 1px solid rgba(201,148,58,0.3);
+    border-radius: 50%;
+    width: 46px; height: 46px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .mute-btn:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+</style>
+</head>
+<body>
+
+<canvas id="fireworksCanvas"></canvas>
+
+<!-- Mute toggle -->
+<button class="mute-btn" id="muteBtn" title="Toggle sound">🔊</button>
+
+<div class="content">
+
+  <div class="hero">
+    <div class="hero-bg-number">18</div>
+    <p class="hero-badge">✦ today is the day ✦</p>
+    <h1 class="hero-title">
+      Happy 18th,
+      <span class="name">Awa</span>
+    </h1>
+    <p class="hero-subtitle">The world just got a little more beautiful 🌊</p>
+    <div class="scroll-hint">
+      <span>scroll</span>
+      <div class="scroll-chevron"></div>
+    </div>
+  </div>
+
+  <section id="s-quotes">
+    <p class="section-tag">✦ from the pages she loves ✦</p>
+    <h2 class="section-title">Words for the <span class="accent">birthday girl</span></h2>
+    <div class="quotes-wrap">
+      <div class="quote-card">
+        <div class="quote-mark">"</div>
+        <p class="quote-text">"Hiduplah dengan penuh, karena hidup hanya sekali."</p>
+        <p class="quote-translation">Live fully, because life happens only once.</p>
+        <p class="quote-source">— Laut Bercerita · Leila S. Chudori</p>
+      </div>
+      <div class="quote-card">
+        <div class="quote-mark">"</div>
+        <p class="quote-text">"Cinta yang tulus akan selalu menemukan jalannya."</p>
+        <p class="quote-translation">True love always finds its way.</p>
+        <p class="quote-source">— Ayat-Ayat Cinta 2 · Habiburrahman El Shirazy</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="wave-divider">～ ✦ ～ ✦ ～ ✦ ～</div>
+
+  <section id="s-things">
+    <p class="section-tag">✦ a little list ✦</p>
+    <h2 class="section-title">18 things that make<br><span class="accent">you, you</span></h2>
+    <div class="things-grid">
+      <div class="thing-item"><span class="thing-num">01</span><span class="thing-text">You find whole worlds between the pages of a book</span></div>
+      <div class="thing-item"><span class="thing-num">02</span><span class="thing-text">You feel stories deeply — like they were written for you</span></div>
+      <div class="thing-item"><span class="thing-num">03</span><span class="thing-text">The ocean is in your name, and in your soul</span></div>
+      <div class="thing-item"><span class="thing-num">04</span><span class="thing-text">You make 18 look like the beginning of something great</span></div>
+      <div class="thing-item"><span class="thing-num">05</span><span class="thing-text">You carry warmth wherever you go</span></div>
+      <div class="thing-item"><span class="thing-num">06</span><span class="thing-text">Your laughter is one of the best sounds in the world</span></div>
+      <div class="thing-item"><span class="thing-num">07</span><span class="thing-text">You're braver than you give yourself credit for</span></div>
+      <div class="thing-item"><span class="thing-num">08</span><span class="thing-text">You've grown so beautifully, one chapter at a time</span></div>
+      <div class="thing-item"><span class="thing-num">09</span><span class="thing-text">The way you see the world is quietly magical</span></div>
+      <div class="thing-item"><span class="thing-num">10</span><span class="thing-text">You deserve every good thing coming your way</span></div>
+      <div class="thing-item"><span class="thing-num">11</span><span class="thing-text">You turn ordinary days into something worth remembering</span></div>
+      <div class="thing-item"><span class="thing-num">12</span><span class="thing-text">You make people feel seen without even trying</span></div>
+      <div class="thing-item"><span class="thing-num">13</span><span class="thing-text">There's a quiet strength in you that never quits</span></div>
+      <div class="thing-item"><span class="thing-num">14</span><span class="thing-text">You find beauty in the words others overlook</span></div>
+      <div class="thing-item"><span class="thing-num">15</span><span class="thing-text">You are kind in a world that needs more of it</span></div>
+      <div class="thing-item"><span class="thing-num">16</span><span class="thing-text">Every story you love says something beautiful about who you are</span></div>
+      <div class="thing-item"><span class="thing-num">17</span><span class="thing-text">Your 18 years have been a beautiful, unfinished novel</span></div>
+      <div class="thing-item"><span class="thing-num">18</span><span class="thing-text">And the best chapters are still ahead of you ✨</span></div>
+    </div>
+  </section>
+
+  <div class="wave-divider">～ ✦ ～ ✦ ～ ✦ ～</div>
+
+  <section id="s-letter">
+    <p class="section-tag">✦ from anshu ✦</p>
+    <h2 class="section-title">A little <span class="accent">letter</span></h2>
+    <div class="letter-card">
+      <p>Dear Awa,</p>
+      <p>You're 18 today. That's a whole new chapter — the kind that doesn't have its ending written yet, and honestly, that's the most exciting kind.</p>
+      <p>I thought about you today and smiled, because turning 18 feels big, and you deserve all the big feelings that come with it. The celebration, the joy, the quiet moment where you realize: <span class="letter-em">this is my life, and it's just beginning.</span></p>
+      <p>Like Laut in the stories you love — let the sea keep telling its stories, and let yours unfold beautifully, one page at a time. You've always had a way of finding magic in words. I hope the world gives you plenty of reasons to keep reading, keep dreaming, keep going.</p>
+      <p>Here's to you. Here's to 18.</p>
+      <p class="letter-sign">With so much love,<br>Anshu</p>
+    </div>
+  </section>
+
+  <div class="wave-divider">～ ✦ ～ ✦ ～ ✦ ～</div>
+
+  
+
+  <div class="footer">made with love by anshu &nbsp;·&nbsp; for awa's 18th birthday &nbsp;✦</div>
+</div>
+
+<script>
+// ─── AUDIO SETUP (firework.mp3) ──────────────────────────────
+// Keep firework.mp3 in the SAME folder as this HTML file!
+const fireworkAudio = new Audio('firework.mp3');
+fireworkAudio.preload = 'auto';
+
+// Pool of 5 audio clones so rapid triggers don't cut each other off
+const audioPool = Array.from({ length: 5 }, () => {
+  const a = new Audio('firework.mp3');
+  a.preload = 'auto';
+  a.volume  = 0.85;
+  return a;
+});
+let poolIndex = 0;
+
+let isMuted = false;
+
+function playFireworkSound() {
+  if (isMuted) return;
+  const audio = audioPool[poolIndex % audioPool.length];
+  poolIndex++;
+  audio.currentTime = 0;
+  audio.play().catch(() => {}); // silently ignore autoplay policy blocks
+}
+
+// Mute toggle button
+const muteBtn = document.getElementById('muteBtn');
+muteBtn.addEventListener('click', () => {
+  isMuted = !isMuted;
+  muteBtn.textContent = isMuted ? '🔇' : '🔊';
+});
+
+// ─── FIREWORKS CANVAS ────────────────────────────────────────
+const canvas = document.getElementById('fireworksCanvas');
+const ctx    = canvas.getContext('2d');
+let fwParticles = [];
+
+function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+const FW_COLORS = ['#c9943a','#e8c47a','#f5e8c8','#5a7fa8','#ffdd88','#ffaacc','#aaddff','#ffffff'];
+
+function launchFirework(x, y, count = 70) {
+  for (let i = 0; i < count; i++) {
+    const angle = (Math.PI * 2 / count) * i + (Math.random() - 0.5) * 0.4;
+    const speed = 2.5 + Math.random() * 5;
+    fwParticles.push({
+      x, y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      alpha: 1,
+      color: FW_COLORS[Math.floor(Math.random() * FW_COLORS.length)],
+      size:  1.5 + Math.random() * 2.5,
+      decay: 0.013 + Math.random() * 0.009,
+      trail: []
+    });
+  }
+}
+
+function animateFW() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  fwParticles = fwParticles.filter(p => p.alpha > 0.02);
+  fwParticles.forEach(p => {
+    p.trail.push({ x: p.x, y: p.y, a: p.alpha });
+    if (p.trail.length > 6) p.trail.shift();
+    p.trail.forEach((t, i) => {
+      ctx.save();
+      ctx.globalAlpha = t.a * (i / p.trail.length) * 0.35;
+      ctx.fillStyle   = p.color;
+      ctx.beginPath(); ctx.arc(t.x, t.y, p.size * 0.6, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    });
+    p.x += p.vx; p.y += p.vy; p.vy += 0.06; p.vx *= 0.98; p.alpha -= p.decay;
+    ctx.save();
+    ctx.globalAlpha = p.alpha;
+    ctx.fillStyle   = p.color;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  });
+  requestAnimationFrame(animateFW);
+}
+animateFW();
+
+function autoLaunch() {
+  const W = canvas.width, H = canvas.height;
+  launchFirework(W*0.25, H*0.28);           playFireworkSound();
+  setTimeout(() => { launchFirework(W*0.75, H*0.22); playFireworkSound(); }, 400);
+  setTimeout(() => { launchFirework(W*0.5,  H*0.15); playFireworkSound(); }, 800);
+  setTimeout(() => { launchFirework(W*0.15, H*0.45); playFireworkSound(); }, 1200);
+  setTimeout(() => { launchFirework(W*0.85, H*0.38); playFireworkSound(); }, 1600);
+}
+setTimeout(autoLaunch, 700);
+
+// ─── CONFETTI ────────────────────────────────────────────────
+function burstConfetti(x, y) {
+  confetti({
+    particleCount: 90, spread: 70,
+    origin: { x: x / window.innerWidth, y: y / window.innerHeight },
+    colors: ['#c9943a','#e8c47a','#5a7fa8','#ffaacc','#aaddff','#ffffff','#ffdd88'],
+    scalar: 1.1, gravity: 0.9, drift: 0.3
+  });
+}
+
+setTimeout(() => {
+  burstConfetti(window.innerWidth * 0.3, window.innerHeight * 0.4);
+  burstConfetti(window.innerWidth * 0.7, window.innerHeight * 0.4);
+}, 900);
+
+// ─── SCROLL → SOUND + FIREWORK + CONFETTI ───────────────────
+let lastScrollY  = window.scrollY;
+let lastFireTime = 0;
+
+window.addEventListener('scroll', () => {
+  const now = Date.now();
+  const dy  = Math.abs(window.scrollY - lastScrollY);
+
+  if (dy > 55 && now - lastFireTime > 600) {
+    lastFireTime = now;
+    lastScrollY  = window.scrollY;
+
+    playFireworkSound();
+    launchFirework(Math.random() * canvas.width, Math.random() * canvas.height * 0.5);
+    burstConfetti(Math.random() * window.innerWidth, window.scrollY + window.innerHeight * 0.4);
+  }
+});
+
+// ─── FLOATING EMOJI PARTICLES ────────────────────────────────
+const EMOJIS = ['✨','🎉','🌊','📚','🎂','⭐','🌸','💛','🎈','🌟'];
+
+function spawnParticle() {
+  const el = document.createElement('div');
+  el.className   = 'particle';
+  el.textContent = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+  el.style.left              = (Math.random() * 100) + 'vw';
+  el.style.fontSize          = (0.7 + Math.random() * 1.0) + 'rem';
+  el.style.animationDuration = (7 + Math.random() * 9) + 's';
+  el.style.animationDelay    = (Math.random() * 3) + 's';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 18000);
+}
+setInterval(spawnParticle, 1100);
+
+// ─── SECTION REVEAL ──────────────────────────────────────────
+const sections = document.querySelectorAll('section');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      playFireworkSound();
+      burstConfetti(
+        window.innerWidth  * (0.2 + Math.random() * 0.6),
+        window.innerHeight * 0.5
+      );
+    }
+  });
+}, { threshold: 0.2 });
+sections.forEach(s => io.observe(s));
+
+// ─── WISHES WALL ─────────────────────────────────────────────
+function addWish() {
+  const input = document.getElementById('wishInput');
+  const text  = input.value.trim();
+  if (!text) return;
+
+  const list = document.getElementById('wishesList');
+  const div  = document.createElement('div');
+  div.className   = 'wish-bubble';
+  div.textContent = text;
+  list.prepend(div);
+  input.value = '';
+
+  playFireworkSound();
+  burstConfetti(window.innerWidth / 2, window.innerHeight / 2);
+  launchFirework(
+    window.innerWidth  * (0.3 + Math.random() * 0.4),
+    window.innerHeight * 0.3
+  );
+}
+
+document.getElementById('wishInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); addWish(); }
+});
+</script>
+</body>
+</html>
